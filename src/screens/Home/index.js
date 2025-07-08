@@ -1,27 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Icon from '@react-native-vector-icons/material-design-icons';
 import React, { useCallback, useContext, useEffect } from 'react';
-import {
-  FlatList,
-  Image,
-  ImageBackground,
-  ScrollView,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { FlatList, ScrollView, useWindowDimensions, View } from 'react-native';
 import AnimeListItem from '../../components/AnimeListItem';
-import { BLACK, ORANGE, WHITE } from '../../components/common/colors';
+import { BLACK, WHITE } from '../../components/common/colors';
 import MyHeader, { HEADER_TYPE } from '../../components/common/MyHeader';
 import MyPressable from '../../components/common/MyPressable';
-import MyText from '../../components/common/MyText';
 
-import { AnimeContext } from '../../context/animeContext';
-import styles from './styles';
 import { useTheme } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
 import RecommendationItem from '../../components/RecommendationItem';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
+import { AnimeContext } from '../../context/animeContext';
+import styles from './styles';
+import Shimmer from '../../components/common/Shimmer';
 
 const HomeScreen = () => {
   const { width: fullWidth } = useWindowDimensions();
@@ -40,6 +32,8 @@ const HomeScreen = () => {
     getAnimeList();
   }, []);
 
+  const _handleAnimeOnPress = id => {};
+
   const _renderRecommendations = useCallback(
     ({ item, index }) => {
       const isFavourited = favouriteAnimeIds?.data?.includes(item?.mal_id);
@@ -48,6 +42,9 @@ const HomeScreen = () => {
           data={item}
           index={index}
           isFavourited={isFavourited}
+          onPress={() => {
+            _handleAnimeOnPress(item?.mal_id);
+          }}
         />
       );
     },
@@ -98,10 +95,7 @@ const HomeScreen = () => {
         />
       )}
       {recommendations?.isLoading ? (
-        <ShimmerPlaceholder
-          style={styles.recommendationsShimmer}
-          LinearGradient={LinearGradient}
-        />
+        <Shimmer style={styles.recommendationsShimmer} />
       ) : (
         recommendations?.data?.list && (
           <Carousel

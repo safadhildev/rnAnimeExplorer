@@ -20,8 +20,13 @@ const App = () => {
     };
 
     const theme = isDarkMode ? DarkTheme : DefaultTheme;
+
+    console.log('[DEBUG] >> ', { theme });
     return {
       ...theme,
+      shimmerColors: isDarkMode
+        ? ['#121212', '#272729', '#121212']
+        : ['#ebebeb', '#c5c5c5', '#ebebeb'],
       toggleTheme: _toggleTheme,
     };
   }, [isDarkMode]);

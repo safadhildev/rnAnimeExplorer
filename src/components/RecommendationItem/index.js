@@ -7,17 +7,12 @@ import { ORANGE, RED } from '../common/colors';
 import MyPressable from '../common/MyPressable';
 import MyText from '../common/MyText';
 
-const RecommendationItem = ({ data, index, isFavourited }) => {
+const RecommendationItem = ({ data, index, isFavourited, onPress }) => {
   const theme = useTheme();
   const { onFavouriteAnimeById } = useContext(AnimeContext);
 
   return (
-    <MyPressable
-      onPress={() => {
-        console.log('[DEBUG] >> onPressRecommendation >> ', { data });
-      }}
-      style={styles.container(theme)}
-    >
+    <MyPressable onPress={onPress} style={styles.container(theme)}>
       {({ pressed }) => (
         <>
           <ImageBackground
@@ -94,7 +89,8 @@ const styles = StyleSheet.create({
     bottom: 5,
     left: 5,
     right: 5,
-    padding: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 10,
     backgroundColor: theme?.colors?.card,
     borderWidth: 1,
@@ -111,7 +107,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 2,
     bottom: 5,
-    right: 5,
+    right: 10,
   },
   infoScoreWrapper: {
     flexDirection: 'row',

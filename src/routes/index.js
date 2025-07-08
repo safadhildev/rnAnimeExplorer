@@ -1,5 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { HOME_SCREEN } from '../components/common/routeConstants';
+import {
+  ANIME_DETAILS_SCREEN,
+  HOME_SCREEN,
+} from '../components/common/routeConstants';
 import HomeScreen from '../screens/Home';
 import { useContext, useEffect } from 'react';
 import { AnimeContext } from '../context/animeContext';
@@ -7,6 +10,7 @@ import SplashOverlay from '../components/SplashOverlay';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@react-navigation/native';
 import { StatusBar } from 'react-native';
+import AnimeDetails from '../screens/AnimeDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +43,7 @@ const RootStack = () => {
           component={HomeScreen}
           options={{ title: 'Overview' }}
         />
-        {/* <Stack.Screen name="Details" component={DetailsScreen} /> */}
+        <Stack.Screen name={ANIME_DETAILS_SCREEN} component={AnimeDetails} />
       </Stack.Navigator>
     </SafeAreaView>
   );

@@ -1,9 +1,8 @@
-import React from 'react';
-import MyText from './MyText';
-import { StyleSheet, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
-import LinearGradient from 'react-native-linear-gradient';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import MyText from './MyText';
+import Shimmer from './Shimmer';
 
 export const HEADER_TYPE = {
   HEADING: 'HEADING',
@@ -16,10 +15,7 @@ const MyHeader = ({ containerStyle, type, text, isLoading = false }) => {
   if (isLoading) {
     return (
       <View style={[styles.container(type), containerStyle]}>
-        <ShimmerPlaceholder
-          LinearGradient={LinearGradient}
-          style={styles.shimmer(type)}
-        />
+        <Shimmer style={styles.shimmer(type)} />
       </View>
     );
   }

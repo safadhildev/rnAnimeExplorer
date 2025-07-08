@@ -1,13 +1,12 @@
+import Icon from '@react-native-vector-icons/material-design-icons';
+import { useTheme } from '@react-navigation/native';
 import React, { useContext } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { AnimeContext } from '../../context/animeContext';
 import MyPressable from '../common/MyPressable';
-import { ORANGE, RED, WHITE } from '../common/colors';
-import { useTheme } from '@react-navigation/native';
 import MyText from '../common/MyText';
-import Icon from '@react-native-vector-icons/material-design-icons';
-import LinearGradient from 'react-native-linear-gradient';
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import Shimmer from '../common/Shimmer';
+import { ORANGE, RED, WHITE } from '../common/colors';
 
 const AnimeListItem = ({ data, index, isFavourited, isLoading = true }) => {
   const theme = useTheme();
@@ -22,21 +21,16 @@ const AnimeListItem = ({ data, index, isFavourited, isLoading = true }) => {
           theme,
         )}
       >
-        <ShimmerPlaceholder
-          style={styles.image}
-          LinearGradient={LinearGradient}
-        />
+        <Shimmer style={styles.image} />
         <View style={styles.infoWrapper}>
           <View style={{ flex: 1 }}>
-            <ShimmerPlaceholder style={{ height: 20 }} />
-            <ShimmerPlaceholder
-              style={{ width: '50%', height: 20, marginTop: 2 }}
-            />
-            <ShimmerPlaceholder style={{ marginTop: 10 }} />
-            <ShimmerPlaceholder style={{ marginTop: 2 }} />
-            <ShimmerPlaceholder style={{ width: '60%', marginTop: 2 }} />
+            <Shimmer style={{ height: 20 }} />
+            <Shimmer style={{ width: '50%', height: 20, marginTop: 2 }} />
+            <Shimmer style={{ marginTop: 10 }} />
+            <Shimmer style={{ marginTop: 2 }} />
+            <Shimmer style={{ width: '60%', marginTop: 2 }} />
           </View>
-          <ShimmerPlaceholder style={{ width: '100%', height: 20 }} />
+          <Shimmer style={{ width: '100%', height: 20 }} />
         </View>
       </View>
     );
