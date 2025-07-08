@@ -1,0 +1,13 @@
+export const ORANGE = '#F39C12';
+export const BLACK = '#000000';
+export const GREY = '#ECECEC';
+export const GREY_DARK = '#333333';
+export const WHITE = '#ECECEC';
+export const SILVER = '#BDC3C7';
+export const BACKGROUND_DARK = '#000000';
+export const BACKGROUND_LIGHT = '#ECF0F1';
+export const GREEN_LIGHT = '#2ECC71';
+export const GREEN = '#27AE60';
+export const BLUE_LIGHT = '#3498DB';
+export const BLUE = '#2980B9';
+export const RED = '#D32F2F';

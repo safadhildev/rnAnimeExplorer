@@ -1,0 +1,159 @@
+import React, { useContext } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { AnimeContext } from '../../context/animeContext';
+import MyPressable from '../common/MyPressable';
+import { ORANGE, RED, WHITE } from '../common/colors';
+import { useTheme } from '@react-navigation/native';
+import MyText from '../common/MyText';
+import Icon from '@react-native-vector-icons/material-design-icons';
+import LinearGradient from 'react-native-linear-gradient';
+import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+
+const AnimeListItem = ({ data, index, isFavourited, isLoading = true }) => {
+  const theme = useTheme();
+  const { onFavouriteAnimeById } = useContext(AnimeContext);
+
+  if (isLoading) {
+    return (
+      <View
+        style={styles.itemContainer(
+          index === 0,
+          index === data?.length - 1,
+          theme,
+        )}
+      >
+        <ShimmerPlaceholder
+          style={styles.image}
+          LinearGradient={LinearGradient}
+        />
+        <View style={styles.infoWrapper}>
+          <View style={{ flex: 1 }}>
+            <ShimmerPlaceholder style={{ height: 20 }} />
+            <ShimmerPlaceholder
+              style={{ width: '50%', height: 20, marginTop: 2 }}
+            />
+            <ShimmerPlaceholder style={{ marginTop: 10 }} />
+            <ShimmerPlaceholder style={{ marginTop: 2 }} />
+            <ShimmerPlaceholder style={{ width: '60%', marginTop: 2 }} />
+          </View>
+          <ShimmerPlaceholder style={{ width: '100%', height: 20 }} />
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <MyPressable
+      // disabled={animeList?.isLoading}
+      key={`${index}_${data?.mal_id}`}
+      onPress={() => {
+        console.log('[DEBUG] >> _renderAnimeList >> ', { data });
+      }}
+      style={styles.itemContainer(
+        index === 0,
+        index === data?.length - 1,
+        theme,
+      )}
+    >
+      {({ pressed }) => (
+        <>
+          <Image
+            key={`${index}_${data?.mal_id}`}
+            source={{
+              uri: data?.images?.webp?.large_image_url,
+            }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <View style={styles.infoWrapper}>
+            <View style={{ flex: 1 }}>
+              <MyText
+                numberOfLines={2}
+                ellipsizeMode="tail"
+                style={{ fontWeight: 'bold' }}
+              >
+                {data?.title}
+              </MyText>
+              <MyText
+                numberOfLines={3}
+                ellipsizeMode="tail"
+                style={styles.infoDescription}
+              >
+                {data?.synopsis}
+              </MyText>
+            </View>
+            <View style={styles.infoActionWrapper}>
+              <View style={styles.infoScoreWrapper}>
+                <MyText style={{ color: theme?.colors?.text, fontSize: 14 }}>
+                  {data?.score}
+                </MyText>
+                <Icon name="star" size={20} color={ORANGE} />
+              </View>
+              <MyPressable onPress={() => onFavouriteAnimeById(data?.mal_id)}>
+                {() => (
+                  <Icon
+                    name={isFavourited ? 'heart' : 'heart-outline'}
+                    size={20}
+                    color={RED}
+                  />
+                )}
+              </MyPressable>
+            </View>
+          </View>
+        </>
+      )}
+    </MyPressable>
+  );
+};
+
+const styles = StyleSheet.create({
+  itemContainer: (isFirst, isLast, theme) => ({
+    height: 150,
+    backgroundColor: theme?.colors?.card,
+    borderColor: theme?.colors?.border,
+    borderWidth: 1,
+    flexDirection: 'row',
+    marginHorizontal: 10,
+    marginTop: isFirst ? 0 : 5,
+    marginBottom: isLast ? 0 : 5,
+    borderRadius: 10,
+    padding: 5,
+    overflow: 'hidden',
+  }),
+  image: {
+    width: 120,
+    height: '100%',
+    borderRadius: 5,
+    resizeMode: 'cover',
+  },
+  infoWrapper: { paddingHorizontal: 5, flex: 1 },
+  infoDescription: {
+    fontSize: 10,
+    opacity: 0.4,
+    marginVertical: 5,
+    lineHeight: 14,
+  },
+  infoActionWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  infoScoreWrapper: {
+    flexDirection: 'row',
+  },
+  animeItemCardInfoWrapper: {
+    flex: 1,
+    height: '100%',
+    paddingHorizontal: 10,
+  },
+  animeItemCardFavourite: {
+    minWidth: 30,
+    backgroundColor: WHITE,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    borderTopLeftRadius: 10,
+    padding: 5,
+  },
+});
+
+export default AnimeListItem;
