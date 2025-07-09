@@ -7,3 +7,7 @@ export const fetchRecommendedAnime = async ({ page = 0 }) => {
     method: 'GET',
   });
 };
+
+export const fetchAnimeById = async id => {
+  return fetch(`https://api.jikan.moe/v4/anime/${id}`, { method: 'GET' });
+};

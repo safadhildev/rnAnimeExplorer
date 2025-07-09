@@ -1,16 +1,15 @@
+import { useTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useContext } from 'react';
 import {
   ANIME_DETAILS_SCREEN,
   HOME_SCREEN,
+  TAB_NAVIGATOR,
 } from '../components/common/routeConstants';
-import HomeScreen from '../screens/Home';
-import { useContext, useEffect } from 'react';
-import { AnimeContext } from '../context/animeContext';
 import SplashOverlay from '../components/SplashOverlay';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@react-navigation/native';
-import { StatusBar } from 'react-native';
+import { AnimeContext } from '../context/animeContext';
 import AnimeDetails from '../screens/AnimeDetails';
+import TabNavigator from './TabNav';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,34 +17,34 @@ const RootStack = () => {
   const theme = useTheme();
   const { intialLoading } = useContext(AnimeContext);
 
-  useEffect(() => {
-    StatusBar.setBarStyle(theme?.dark ? 'light-content' : 'dark-content');
-  }, [theme]);
-
   if (intialLoading) {
     return <SplashOverlay />;
   }
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: theme?.colors?.background }}
+    <Stack.Navigator
+      initialRouteName={TAB_NAVIGATOR}
+      screenOptions={{
+        headerShown: false,
+        // navigationBarHidden: true,
+        statusBarAnimation: 'none',
+      }}
     >
-      <Stack.Navigator
-        initialRouteName={HOME_SCREEN}
-        screenOptions={{
-          // statusBarHidden: true,
-          headerShown: false,
-          navigationBarHidden: true,
+      <Stack.Screen
+        name={TAB_NAVIGATOR}
+        component={TabNavigator}
+        initialParams={{ currentTab: HOME_SCREEN }}
+        options={{
+          title: 'Overview',
+          statusBarStyle: theme?.dark ? 'light' : 'dark',
         }}
-      >
-        <Stack.Screen
-          name={HOME_SCREEN}
-          component={HomeScreen}
-          options={{ title: 'Overview' }}
-        />
-        <Stack.Screen name={ANIME_DETAILS_SCREEN} component={AnimeDetails} />
-      </Stack.Navigator>
-    </SafeAreaView>
+      />
+      <Stack.Screen
+        options={{ statusBarHidden: true, statusBarAnimation: 'none' }}
+        name={ANIME_DETAILS_SCREEN}
+        component={AnimeDetails}
+      />
+    </Stack.Navigator>
   );
 };
 

@@ -4,15 +4,16 @@ import React, { useContext } from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 import { AnimeContext } from '../../context/animeContext';
 import { ORANGE, RED } from '../common/colors';
-import MyPressable from '../common/MyPressable';
+import MyButton from '../common/MyButton';
 import MyText from '../common/MyText';
+import MyCard from '../common/MyCard';
 
 const RecommendationItem = ({ data, index, isFavourited, onPress }) => {
   const theme = useTheme();
   const { onFavouriteAnimeById } = useContext(AnimeContext);
 
   return (
-    <MyPressable onPress={onPress} style={styles.container(theme)}>
+    <MyCard onPress={onPress} containerStyle={styles.container(theme)}>
       {({ pressed }) => (
         <>
           <ImageBackground
@@ -52,25 +53,21 @@ const RecommendationItem = ({ data, index, isFavourited, onPress }) => {
                 </MyText>
               </View>
               <View style={styles.infoBottomWrapper}>
-                <MyPressable
+                <MyButton
                   onPress={() => {
                     onFavouriteAnimeById(data?.mal_id);
                   }}
-                >
-                  {({ pressed }) => (
-                    <Icon
-                      name={isFavourited ? 'heart' : 'heart-outline'}
-                      size={20}
-                      color={RED}
-                    />
-                  )}
-                </MyPressable>
+                  icon={isFavourited ? 'heart' : 'heart-outline'}
+                  iconSize={20}
+                  iconColor={RED}
+                  containerStyle={{ borderWidth: 0 }}
+                />
               </View>
             </View>
           </ImageBackground>
         </>
       )}
-    </MyPressable>
+    </MyCard>
   );
 };
 

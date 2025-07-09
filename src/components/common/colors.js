@@ -1,7 +1,7 @@
 export const ORANGE = '#F39C12';
 export const BLACK = '#000000';
 export const GREY = '#ECECEC';
-export const GREY_DARK = '#333333';
+export const GREY_DARK = '#9E9E9E';
 export const WHITE = '#ECECEC';
 export const SILVER = '#BDC3C7';
 export const BACKGROUND_DARK = '#000000';

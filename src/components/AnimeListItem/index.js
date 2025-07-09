@@ -3,12 +3,19 @@ import { useTheme } from '@react-navigation/native';
 import React, { useContext } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { AnimeContext } from '../../context/animeContext';
-import MyPressable from '../common/MyPressable';
+import MyButton from '../common/MyButton';
 import MyText from '../common/MyText';
 import Shimmer from '../common/Shimmer';
 import { ORANGE, RED, WHITE } from '../common/colors';
+import MyCard from '../common/MyCard';
 
-const AnimeListItem = ({ data, index, isFavourited, isLoading = true }) => {
+const AnimeListItem = ({
+  data,
+  index,
+  isFavourited,
+  isLoading = true,
+  onPress,
+}) => {
   const theme = useTheme();
   const { onFavouriteAnimeById } = useContext(AnimeContext);
 
@@ -37,13 +44,10 @@ const AnimeListItem = ({ data, index, isFavourited, isLoading = true }) => {
   }
 
   return (
-    <MyPressable
-      // disabled={animeList?.isLoading}
+    <MyCard
       key={`${index}_${data?.mal_id}`}
-      onPress={() => {
-        console.log('[DEBUG] >> _renderAnimeList >> ', { data });
-      }}
-      style={styles.itemContainer(
+      onPress={onPress}
+      containerStyle={styles.itemContainer(
         index === 0,
         index === data?.length - 1,
         theme,
@@ -69,7 +73,7 @@ const AnimeListItem = ({ data, index, isFavourited, isLoading = true }) => {
                 {data?.title}
               </MyText>
               <MyText
-                numberOfLines={3}
+                numberOfLines={5}
                 ellipsizeMode="tail"
                 style={styles.infoDescription}
               >
@@ -83,20 +87,19 @@ const AnimeListItem = ({ data, index, isFavourited, isLoading = true }) => {
                 </MyText>
                 <Icon name="star" size={20} color={ORANGE} />
               </View>
-              <MyPressable onPress={() => onFavouriteAnimeById(data?.mal_id)}>
-                {() => (
-                  <Icon
-                    name={isFavourited ? 'heart' : 'heart-outline'}
-                    size={20}
-                    color={RED}
-                  />
-                )}
-              </MyPressable>
+              <MyButton
+                onPress={() => onFavouriteAnimeById(data?.mal_id)}
+                icon={isFavourited ? 'heart' : 'heart-outline'}
+                iconSize={20}
+                iconColor={RED}
+                containerStyle={{ borderWidth: 0 }}
+                hideBackground
+              />
             </View>
           </View>
         </>
       )}
-    </MyPressable>
+    </MyCard>
   );
 };
 

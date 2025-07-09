@@ -9,7 +9,14 @@ export const HEADER_TYPE = {
   SECTION: 'SECITON',
 };
 
-const MyHeader = ({ containerStyle, type, text, isLoading = false }) => {
+const MyHeader = ({
+  containerStyle,
+  style,
+  type = HEADER_TYPE.HEADING,
+  text,
+  isLoading = false,
+  sticky = false,
+}) => {
   const theme = useTheme();
 
   if (isLoading) {
@@ -20,14 +27,10 @@ const MyHeader = ({ containerStyle, type, text, isLoading = false }) => {
     );
   }
 
+  console.log('[DEBUG] >> theme?.colors?.text >> ', theme?.colors?.text);
   return (
-    <View
-      style={[
-        styles.container(type, theme?.colors?.background),
-        containerStyle,
-      ]}
-    >
-      <MyText style={styles.text(type, theme?.colors?.text)}>{text}</MyText>
+    <View style={[styles.container(type, theme, sticky), containerStyle]}>
+      <MyText style={[styles.text(type), style]}>{text}</MyText>
     </View>
   );
 };
@@ -37,19 +40,19 @@ const styles = StyleSheet.create({
     height:
       headerType === HEADER_TYPE.HEADING ? 32 : HEADER_TYPE.SECTION ? 28 : 14,
   }),
-  container: (headerType, backgroundColor) => ({
-    backgroundColor,
+  container: (headerType, theme, sticky) => ({
+    flexDirection: 'row',
+    backgroundColor: sticky ? theme?.colors?.background : 'transparent',
     paddingVertical:
       headerType === HEADER_TYPE.HEADING ? 10 : HEADER_TYPE.SECTION ? 6 : 2,
     paddingHorizontal:
       headerType === HEADER_TYPE.HEADING ? 10 : HEADER_TYPE.SECTION ? 6 : 2,
   }),
-  text: (headerType, color) => ({
-    color,
+  text: headerType => ({
     fontSize:
-      headerType === HEADER_TYPE.HEADING ? 28 : HEADER_TYPE.SECTION ? 20 : 18,
+      headerType === HEADER_TYPE.HEADING ? 24 : HEADER_TYPE.SECTION ? 18 : 14,
     lineHeight:
-      headerType === HEADER_TYPE.HEADING ? 32 : HEADER_TYPE.SECTION ? 28 : 14,
+      headerType === HEADER_TYPE.HEADING ? 28 : HEADER_TYPE.SECTION ? 22 : 18,
     fontWeight:
       headerType === HEADER_TYPE.HEADING
         ? 900

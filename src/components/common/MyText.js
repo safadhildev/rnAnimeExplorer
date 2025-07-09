@@ -19,7 +19,7 @@ const MyText = ({ style, children, ...props }) => {
 
 const styles = StyleSheet.create({
   default: theme => ({
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 400,
     color: theme?.colors?.text,
   }),

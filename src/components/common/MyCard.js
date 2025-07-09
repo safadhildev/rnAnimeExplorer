@@ -1,12 +1,12 @@
 import React from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 
-const MyPressable = ({ children, disabled, onPress, style }) => {
+const MyCard = ({ children, onPress, disabled, containerStyle }) => {
   return (
     <Pressable
       disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => [style, styles.default(pressed)]}
+      style={({ pressed }) => [styles.default(pressed), containerStyle]}
     >
       {({ pressed }) => children({ pressed })}
     </Pressable>
@@ -14,7 +14,7 @@ const MyPressable = ({ children, disabled, onPress, style }) => {
 };
 
 const styles = StyleSheet.create({
-  default: pressed => ({ transform: [{ scale: pressed ? 0.99 : 1 }] }),
+  default: () => ({}),
 });
 
-export default MyPressable;
+export default MyCard;

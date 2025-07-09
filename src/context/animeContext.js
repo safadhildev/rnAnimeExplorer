@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
-import { fetchAnimeList } from '../api/apiAnime';
-import { STATE_UPDATER_TYPE } from '../components/constants/stateConstants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { throttle } from 'lodash';
+import React, { createContext, useState } from 'react';
+import { fetchAnimeById, fetchAnimeList } from '../api/apiAnime';
+import { STATE_UPDATER_TYPE } from '../components/constants/stateConstants';
 import { updateListStore } from '../utils';
 
 const DEFAULT_STATE = {
@@ -68,6 +69,19 @@ const AnimeProvider = ({ children }) => {
     }
   };
 
+  const _getAnimeById = async id => {
+    try {
+      const response = await fetchAnimeById(id);
+      if (response?.status === 200) {
+        const results = await response.json();
+        return { data: results?.data, error: null };
+      }
+    } catch (error) {
+      console.error('[DEBUG] >> getAnimeList >> ', { error });
+      return { data: null, error };
+    }
+  };
+
   const _getAnimeRecommendations = async () => {
     try {
       _updateState(STATE_UPDATER_TYPE.START, setRecommendations);
@@ -107,7 +121,7 @@ const AnimeProvider = ({ children }) => {
     }
   };
 
-  const _updateFavouriteAnimeIds = async id => {
+  const _updateFavouriteAnimeIds = throttle(async id => {
     try {
       await updateListStore('favouriteAnimeIds', id);
     } catch (error) {
@@ -115,7 +129,7 @@ const AnimeProvider = ({ children }) => {
     } finally {
       await _getFavouriteAnimeIds();
     }
-  };
+  }, 300);
 
   return (
     <AnimeContext.Provider
@@ -123,6 +137,7 @@ const AnimeProvider = ({ children }) => {
         getAnimeList: _getAnimeList,
         getRecommendations: _getAnimeRecommendations,
         getFavouriteAnimeIds: _getFavouriteAnimeIds,
+        getAnimeById: _getAnimeById,
         onFavouriteAnimeById: _updateFavouriteAnimeIds,
         animeList,
         recommendations,
