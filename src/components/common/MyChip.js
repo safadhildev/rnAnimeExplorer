@@ -22,7 +22,7 @@ const MyChip = ({
         <Icon
           name={icon}
           size={iconSize}
-          color={accent || theme?.colors?.primary}
+          color={iconColor ? iconColor : accent || theme?.colors?.primary}
           style={[styles.icon, iconStyle]}
         />
       )}
@@ -59,13 +59,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor,
     height: 24,
-    width: 70,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 2,
     borderRadius: 8,
     marginTop: -2,
     flexDirection: 'row',
+    paddingHorizontal: 10,
   }),
   text: color => ({ color, fontSize: 12 }),
   icon: { marginLeft: -5 },

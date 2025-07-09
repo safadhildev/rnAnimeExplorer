@@ -53,7 +53,7 @@ const AnimeDetails = () => {
 
   const { params } = useRoute();
 
-  const { getAnimeById, favouriteAnimeIds, onFavouriteAnimeById } =
+  const { getAnimeById, getIsAnimeFavourited, onFavouriteAnime } =
     useContext(AnimeContext);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -65,9 +65,7 @@ const AnimeDetails = () => {
     }
   };
 
-  const _handleToggleFavourite = () => {
-    onFavouriteAnimeById(data?.mal_id);
-  };
+  const _handleToggleFavourite = async () => await onFavouriteAnime(data);
 
   const _handleShare = async () => {
     try {
@@ -225,7 +223,7 @@ const AnimeDetails = () => {
     return <MyText>LOADING</MyText>;
   }
 
-  const isFavourited = favouriteAnimeIds?.data?.includes(data?.mal_id);
+  const isFavourited = getIsAnimeFavourited(data?.mal_id);
 
   return (
     <>

@@ -1,9 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { throttle } from 'lodash';
-import React, { createContext, useState } from 'react';
+import React, { createContext, useMemo, useState } from 'react';
 import { fetchAnimeById, fetchAnimeList } from '../api/apiAnime';
 import { STATE_UPDATER_TYPE } from '../components/constants/stateConstants';
-import { updateListStore } from '../utils';
+import { getStoreItem, onStoreItem, updateListStore } from '../utils';
+import { BUTTON_TYPE, STORE_KEY } from '../components/constants';
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { useColorScheme } from 'react-native';
 
 const DEFAULT_STATE = {
   ANIME_LIST: {
@@ -30,10 +33,11 @@ const AnimeProvider = ({ children }) => {
   const [recommendations, setRecommendations] = useState(
     DEFAULT_STATE.RECOMMENDED_LIST,
   );
-  const [favouriteAnimeIds, setFavouriteAnimeIds] = useState(
+  const [favouriteAnimeList, setFavouriteAnimeList] = useState(
     DEFAULT_STATE.FAVOURITE_IDS,
   );
   const [intialLoading, setInitialLoading] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(useColorScheme() === 'dark');
 
   const _updateState = (type, callback, value) => {
     if (callback && typeof callback === 'function') {
@@ -101,48 +105,97 @@ const AnimeProvider = ({ children }) => {
     }
   };
 
-  const _getFavouriteAnimeIds = async () => {
+  const _getStoredFavouriteAnimeList = async () => {
     try {
-      _updateState(STATE_UPDATER_TYPE.START, setFavouriteAnimeIds);
-      const storedStr = await AsyncStorage.getItem('favouriteAnimeIds');
+      _updateState(STATE_UPDATER_TYPE.START, setFavouriteAnimeList);
+      const storedStr = await AsyncStorage.getItem(STORE_KEY.FAVOURITE_ANIME);
       if (storedStr !== null) {
         _updateState(
           STATE_UPDATER_TYPE.UPDATE,
-          setFavouriteAnimeIds,
+          setFavouriteAnimeList,
           JSON.parse(storedStr),
         );
       }
     } catch (error) {
-      console.error('[DEBUG] >> _getFavouriteAnimeIds >> ', { error });
-      _updateState(STATE_UPDATER_TYPE.ERROR, setFavouriteAnimeIds, error);
+      console.error('[DEBUG] >> _getStoredFavouriteAnimeList >> ', { error });
+      _updateState(STATE_UPDATER_TYPE.ERROR, setFavouriteAnimeList, error);
     } finally {
-      _updateState(STATE_UPDATER_TYPE.END, setFavouriteAnimeIds);
+      _updateState(STATE_UPDATER_TYPE.END, setFavouriteAnimeList);
       setInitialLoading(false);
     }
   };
 
-  const _updateFavouriteAnimeIds = throttle(async id => {
+  const _updateStoredFavouriteAnimeList = throttle(async data => {
     try {
-      await updateListStore('favouriteAnimeIds', id);
+      await updateListStore(STORE_KEY.FAVOURITE_ANIME, data);
     } catch (error) {
       console.error('[DEBUG] >> updateFavouriteAnimeIds >> ', { error });
     } finally {
-      await _getFavouriteAnimeIds();
+      await _getStoredFavouriteAnimeList();
     }
-  }, 300);
+  }, 500);
+
+  const _getIsAnimeFavourited = id => {
+    return favouriteAnimeList?.data.some(favAnime => favAnime?.mal_id === id);
+  };
+
+  const _initApp = async () => {
+    try {
+      await _getStoredFavouriteAnimeList();
+      const isDarkMode = await getStoreItem(STORE_KEY.IS_DARK_MODE);
+      setIsDarkMode(isDarkMode);
+    } catch (error) {
+      console.error('[DEBUG] >> _init >> ', error);
+    }
+  };
+
+  const theme = useMemo(() => {
+    const _toggleTheme = throttle(() => {
+      setIsDarkMode(!isDarkMode);
+      onStoreItem('isDarkMode', !isDarkMode);
+    }, 500);
+    const theme = isDarkMode ? DarkTheme : DefaultTheme;
+    return {
+      ...theme,
+      shimmerColors: isDarkMode
+        ? ['#121212', '#272729', '#121212']
+        : ['#ebebeb', '#c5c5c5', '#ebebeb'],
+      buttons: {
+        [BUTTON_TYPE.POSITIVE]: {
+          background: '#00897B',
+          border: '#00796B',
+          text: '#E0F2F1',
+        },
+        [BUTTON_TYPE.NEGATIVE]: {
+          background: '#C62828',
+          border: '#F44336',
+          text: '#FFCDD2',
+        },
+        [BUTTON_TYPE.DISABLED]: {
+          background: '#BDBDBD',
+          border: '#D8D8D8',
+          text: '#616161',
+        },
+      },
+      toggleTheme: _toggleTheme,
+    };
+  }, [isDarkMode]);
 
   return (
     <AnimeContext.Provider
       value={{
         getAnimeList: _getAnimeList,
         getRecommendations: _getAnimeRecommendations,
-        getFavouriteAnimeIds: _getFavouriteAnimeIds,
+        getStoredFavouriteAnimeList: _getStoredFavouriteAnimeList,
         getAnimeById: _getAnimeById,
-        onFavouriteAnimeById: _updateFavouriteAnimeIds,
+        getIsAnimeFavourited: _getIsAnimeFavourited,
+        onFavouriteAnime: _updateStoredFavouriteAnimeList,
+        onInitApp: _initApp,
         animeList,
         recommendations,
-        favouriteAnimeIds,
+        favouriteAnimeList,
         intialLoading,
+        theme,
       }}
     >
       {children}

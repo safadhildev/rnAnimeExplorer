@@ -10,7 +10,9 @@ import MyCard from '../common/MyCard';
 
 const RecommendationItem = ({ data, index, isFavourited, onPress }) => {
   const theme = useTheme();
-  const { onFavouriteAnimeById } = useContext(AnimeContext);
+  const { onFavouriteAnime } = useContext(AnimeContext);
+
+  const _handleToggleFavourite = async () => await onFavouriteAnime(data);
 
   return (
     <MyCard onPress={onPress} containerStyle={styles.container(theme)}>
@@ -54,9 +56,7 @@ const RecommendationItem = ({ data, index, isFavourited, onPress }) => {
               </View>
               <View style={styles.infoBottomWrapper}>
                 <MyButton
-                  onPress={() => {
-                    onFavouriteAnimeById(data?.mal_id);
-                  }}
+                  onPress={_handleToggleFavourite}
                   icon={isFavourited ? 'heart' : 'heart-outline'}
                   iconSize={20}
                   iconColor={RED}

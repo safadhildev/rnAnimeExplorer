@@ -1,14 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { use, useContext, useEffect } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { AnimeContext } from '../../context/animeContext';
 
 const SplashOverlay = () => {
-  const { getFavouriteAnimeIds } = useContext(AnimeContext);
+  const { onInitApp } = useContext(AnimeContext);
 
   useEffect(() => {
     setTimeout(() => {
-      getFavouriteAnimeIds();
-    }, 3000);
+      onInitApp();
+    }, 1000);
   }, []);
 
   return <ActivityIndicator size="large" />;

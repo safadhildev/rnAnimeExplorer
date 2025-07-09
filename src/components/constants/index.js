@@ -18,3 +18,8 @@ export const BUTTON_ICON_POSITION = {
   LEFT: 'LEFT',
   RIGHT: 'RIGHT',
 };
+
+export const STORE_KEY = {
+  FAVOURITE_ANIME: 'favouriteAnimeList',
+  IS_DARK_MODE: 'isDarkMode',
+};

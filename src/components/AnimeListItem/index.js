@@ -17,7 +17,9 @@ const AnimeListItem = ({
   onPress,
 }) => {
   const theme = useTheme();
-  const { onFavouriteAnimeById } = useContext(AnimeContext);
+  const { onFavouriteAnime } = useContext(AnimeContext);
+
+  const _handleToggleFavourite = async () => await onFavouriteAnime(data);
 
   if (isLoading) {
     return (
@@ -88,7 +90,7 @@ const AnimeListItem = ({
                 <Icon name="star" size={20} color={ORANGE} />
               </View>
               <MyButton
-                onPress={() => onFavouriteAnimeById(data?.mal_id)}
+                onPress={_handleToggleFavourite}
                 icon={isFavourited ? 'heart' : 'heart-outline'}
                 iconSize={20}
                 iconColor={RED}

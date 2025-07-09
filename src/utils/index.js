@@ -1,6 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import tags from '../components/constants/tags';
 
+export const getStoreItem = async storeKey => {
+  if (!storeKey) {
+    return;
+  }
+
+  try {
+    const stored = await AsyncStorage.getItem(storeKey);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('[DEBUG] >> onStoreItem >> ', { storeKey, value, error });
+  }
+
+  return null;
+};
 export const onStoreItem = async (storeKey, value) => {
   if (!storeKey) {
     return;
@@ -12,7 +28,7 @@ export const onStoreItem = async (storeKey, value) => {
     console.error('[DEBUG] >> onStoreItem >> ', { storeKey, value, error });
   }
 };
-export const updateListStore = async (storeKey, id) => {
+export const updateListStore = async (storeKey, data) => {
   if (!storeKey) {
     return;
   }
@@ -25,10 +41,12 @@ export const updateListStore = async (storeKey, id) => {
       arr = JSON.parse(storedStr);
     }
 
-    if (arr?.includes(id)) {
-      arr = arr?.filter(storedId => storedId !== id);
+    if (arr?.some(storedAnime => storedAnime?.mal_id === data?.mal_id)) {
+      console.log('[DEBUG] >> updateListStore >> REMOVE');
+      arr = arr?.filter(storedAnime => storedAnime?.mal_id !== data?.mal_id);
     } else {
-      arr.push(id);
+      console.log('[DEBUG] >> updateListStore >> PUSH');
+      arr.push(data);
     }
     await onStoreItem(storeKey, arr);
 

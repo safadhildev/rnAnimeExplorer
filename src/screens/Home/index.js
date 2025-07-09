@@ -1,27 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Icon from '@react-native-vector-icons/material-design-icons';
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
-import {
-  FlatList,
-  ScrollView,
-  StatusBar,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { FlatList, ScrollView, useWindowDimensions, View } from 'react-native';
 import AnimeListItem from '../../components/AnimeListItem';
-import { BLACK, WHITE } from '../../components/common/colors';
-import MyHeader, { HEADER_TYPE } from '../../components/common/MyHeader';
 import MyButton from '../../components/common/MyButton';
+import MyHeader, { HEADER_TYPE } from '../../components/common/MyHeader';
 
 import { useNavigation, useTheme } from '@react-navigation/native';
-import LinearGradient from 'react-native-linear-gradient';
 import Carousel from 'react-native-reanimated-carousel';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ANIME_DETAILS_SCREEN } from '../../components/common/routeConstants';
+import Shimmer from '../../components/common/Shimmer';
 import RecommendationItem from '../../components/RecommendationItem';
 import { AnimeContext } from '../../context/animeContext';
 import styles from './styles';
-import Shimmer from '../../components/common/Shimmer';
-import { ANIME_DETAILS_SCREEN } from '../../components/common/routeConstants';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = () => {
   const { width: fullWidth } = useWindowDimensions();
@@ -34,7 +25,8 @@ const HomeScreen = () => {
     getRecommendations,
     recommendations,
     animeList,
-    favouriteAnimeIds,
+    favouriteAnimeList,
+    getIsAnimeFavourited,
   } = useContext(AnimeContext);
 
   useEffect(() => {
@@ -48,7 +40,7 @@ const HomeScreen = () => {
 
   const _renderRecommendations = useCallback(
     ({ item, index }) => {
-      const isFavourited = favouriteAnimeIds?.data?.includes(item?.mal_id);
+      const isFavourited = getIsAnimeFavourited(item?.mal_id);
       return (
         <RecommendationItem
           data={item}
@@ -60,12 +52,12 @@ const HomeScreen = () => {
         />
       );
     },
-    [favouriteAnimeIds, recommendations],
+    [favouriteAnimeList, recommendations],
   );
 
   const _renderAnimeList = useCallback(
     ({ item, index }) => {
-      const isFavourited = favouriteAnimeIds?.data?.includes(item?.mal_id);
+      const isFavourited = getIsAnimeFavourited(item?.mal_id);
       return (
         <AnimeListItem
           data={item}
@@ -78,7 +70,7 @@ const HomeScreen = () => {
         />
       );
     },
-    [favouriteAnimeIds, animeList],
+    [favouriteAnimeList, animeList],
   );
 
   return (
@@ -88,7 +80,6 @@ const HomeScreen = () => {
       <ScrollView
         nestedScrollEnabled
         style={styles.container(theme?.colors?.background)}
-        // style={{ flex: 1 }}
         stickyHeaderIndices={[1, 3]}
       >
         <View style={styles.topSection}>
@@ -98,7 +89,7 @@ const HomeScreen = () => {
             iconSize={24}
             iconColor={theme?.colors?.text}
             hideBorder
-            hidBackground
+            hideBackground
           />
         </View>
         {(recommendations?.isLoading ||

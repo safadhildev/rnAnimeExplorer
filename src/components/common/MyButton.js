@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     console.log('[DEBUG] >> themeStyle >> ', { themeStyle });
     return {
       backgroundColor: themeStyle?.background,
-      transform: [{ scale: pressed ? 0.99 : 1 }],
+      transform: [{ scale: pressed ? 0.97 : 1 }],
       borderRadius: circle ? 50 : 10,
       borderWidth: hideBorder ? 0 : 1,
       borderColor: themeStyle?.border,
