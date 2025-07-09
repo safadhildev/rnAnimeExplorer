@@ -81,10 +81,9 @@ const MyButton = ({
 
 const styles = StyleSheet.create({
   default: (pressed, circle, float, hideBorder, vertical, themeStyle) => {
-    console.log('[DEBUG] >> themeStyle >> ', { themeStyle });
     return {
       backgroundColor: themeStyle?.background,
-      transform: [{ scale: pressed ? 0.97 : 1 }],
+      transform: [{ scale: pressed ? 0.9 : 1 }],
       borderRadius: circle ? 50 : 10,
       borderWidth: hideBorder ? 0 : 1,
       borderColor: themeStyle?.border,

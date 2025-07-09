@@ -1,9 +1,11 @@
 import Icon from '@react-native-vector-icons/material-design-icons';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import MyText from './MyText';
 import { useTheme } from '@react-navigation/native';
+import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { Pressable, StyleSheet } from 'react-native';
+import MyText from './MyText';
+import { BUTTON_ICON_POSITION } from '../constants';
 
 const MyChip = ({
   color,
@@ -14,24 +16,45 @@ const MyChip = ({
   iconColor,
   iconSize,
   iconStyle,
+  onPress,
+  iconPosition = BUTTON_ICON_POSITION.LEFT,
 }) => {
   const theme = useTheme();
+
+  const _renderIcon = () => {
+    return (
+      <Icon
+        name={icon}
+        size={iconSize}
+        color={iconColor ? iconColor : accent || theme?.colors?.primary}
+        style={[
+          styles.icon(iconPosition === BUTTON_ICON_POSITION.LEFT),
+          iconStyle,
+        ]}
+      />
+    );
+  };
+
   return (
-    <View style={styles.container(color, accent || theme?.colors?.primary)}>
-      {icon && (
-        <Icon
-          name={icon}
-          size={iconSize}
-          color={iconColor ? iconColor : accent || theme?.colors?.primary}
-          style={[styles.icon, iconStyle]}
-        />
+    <Pressable
+      disabled={!isFunction(onPress)}
+      onPress={onPress}
+      style={({ pressed }) =>
+        styles.container(pressed, color, accent || theme?.colors?.primary)
+      }
+    >
+      {({ pressed }) => (
+        <>
+          {icon && iconPosition === BUTTON_ICON_POSITION.LEFT && _renderIcon()}
+          <MyText
+            style={[styles.text(accent || theme?.colors?.primary), textStyle]}
+          >
+            {text}
+          </MyText>
+          {icon && iconPosition === BUTTON_ICON_POSITION.RIGHT && _renderIcon()}
+        </>
       )}
-      <MyText
-        style={[styles.text(accent || theme?.colors?.primary), textStyle]}
-      >
-        {text}
-      </MyText>
-    </View>
+    </Pressable>
   );
 };
 
@@ -54,7 +77,7 @@ MyChip.propTypes = {
 };
 
 const styles = StyleSheet.create({
-  container: (backgroundColor, borderColor) => ({
+  container: (pressed, backgroundColor, borderColor) => ({
     backgroundColor,
     borderWidth: 1,
     borderColor,
@@ -66,9 +89,10 @@ const styles = StyleSheet.create({
     marginTop: -2,
     flexDirection: 'row',
     paddingHorizontal: 10,
+    transform: [{ scale: pressed ? 0.9 : 1 }],
   }),
   text: color => ({ color, fontSize: 12 }),
-  icon: { marginLeft: -5 },
+  icon: isLeft => ({ marginLeft: isLeft ? -5 : 0 }),
 });
 
 export default MyChip;

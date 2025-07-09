@@ -15,6 +15,7 @@ const AnimeListItem = ({
   isFavourited,
   isLoading = true,
   onPress,
+  disabled,
 }) => {
   const theme = useTheme();
   const { onFavouriteAnime } = useContext(AnimeContext);
@@ -49,6 +50,7 @@ const AnimeListItem = ({
     <MyCard
       key={`${index}_${data?.mal_id}`}
       onPress={onPress}
+      disabled={disabled}
       containerStyle={styles.itemContainer(
         index === 0,
         index === data?.length - 1,
@@ -85,7 +87,7 @@ const AnimeListItem = ({
             <View style={styles.infoActionWrapper}>
               <View style={styles.infoScoreWrapper}>
                 <MyText style={{ color: theme?.colors?.text, fontSize: 14 }}>
-                  {data?.score}
+                  {data?.score || 'No Rating'}
                 </MyText>
                 <Icon name="star" size={20} color={ORANGE} />
               </View>

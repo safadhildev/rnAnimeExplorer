@@ -195,6 +195,7 @@ const AnimeProvider = ({ children }) => {
         recommendations,
         favouriteAnimeList,
         intialLoading,
+        isDarkMode,
         theme,
       }}
     >

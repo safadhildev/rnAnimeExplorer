@@ -40,7 +40,7 @@ const FavouriteScreen = () => {
       <MyHeader
         sticky
         isLoading={false}
-        text="Anime List"
+        text="Favourites"
         type={HEADER_TYPE.SECTION}
         containerStyle={{
           marginBottom: 10,

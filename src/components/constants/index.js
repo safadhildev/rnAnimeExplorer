@@ -23,3 +23,6 @@ export const STORE_KEY = {
   FAVOURITE_ANIME: 'favouriteAnimeList',
   IS_DARK_MODE: 'isDarkMode',
 };
+
+
+export const statusList = ['airing', 'complete', 'upcoming'];

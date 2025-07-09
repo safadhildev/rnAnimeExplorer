@@ -1,5 +1,12 @@
-export const fetchAnimeList = async () => {
-  return fetch('https://api.jikan.moe/v4/anime', { method: 'GET' });
+export const fetchAnimeList = async params => {
+  const queryParams = new URLSearchParams(params).toString();
+  console.log('[DEBUG] >> fetchAnimeList >> queryParams >> ', {
+    queryParams,
+    api: `https://api.jikan.moe/v4/anime?${queryParams}`,
+  });
+  return fetch(`https://api.jikan.moe/v4/anime?${queryParams}`, {
+    method: 'GET',
+  });
 };
 
 export const fetchRecommendedAnime = async ({ page = 0 }) => {
