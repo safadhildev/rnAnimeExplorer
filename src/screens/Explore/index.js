@@ -404,10 +404,9 @@ const ExploreScreen = () => {
         onRefresh={async () => {
           await _handleSearchAnime({ q: '', page: 1, limit: 25 });
         }}
-        data={
-          searchLoading ? [1, 2, 3, 4, 5, 6, 7] : [0]?.concat(searchResults)
-        }
+        data={searchLoading ? [1, 2, 3, 4, 5, 6, 7] : searchResults}
         renderItem={_renderAnimeList}
+        style={{ flex: 1 }}
         contentContainerStyle={{
           paddingBottom: 100,
         }}
@@ -441,7 +440,6 @@ const ExploreScreen = () => {
                   value={searchKeyword}
                   onChangeText={_handleTextChange}
                   style={styles.searchInput(theme)}
-                  clearButtonMode="always"
                   placeholder="Search"
                   placeholderTextColor={isDarkMode ? GREY_DARK : SILVER}
                   onSubmitEditing={event => {
@@ -452,6 +450,23 @@ const ExploreScreen = () => {
                     });
                   }}
                 />
+                {searchKeyword?.length > 0 && (
+                  <MyButton
+                    onPress={() => {
+                      setSearchKeyword('');
+                    }}
+                    disabled={searchKeyword?.length === 0}
+                    icon="close"
+                    iconSize={24}
+                    iconColor={theme?.colors?.border}
+                    hideBorder
+                    hideBackground
+                    containerStyle={{
+                      backgroundColor: null,
+                      paddingHorizontal: 10,
+                    }}
+                  />
+                )}
                 <MyButton
                   onPress={() => {
                     _handleSearchAnimeDebounce({
@@ -498,13 +513,12 @@ const ExploreScreen = () => {
         ListEmptyComponent={
           <View style={styles.emptyList}>
             <MyHeader
-              text="No Favourite Anime Found"
+              text="No Results"
               type={HEADER_TYPE.SECTION}
               style={{ textAlign: 'center' }}
             />
             <MyText style={{ textAlign: 'center' }}>
-              Favourite any anime on Home | Details | Explore pages and come
-              back here! :D
+              Try search with new keywords or clear filter ;D
             </MyText>
           </View>
         }
@@ -524,6 +538,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 50,
+    marginTop: 100,
   },
   modalContentContainer: theme => ({
     position: 'absolute',

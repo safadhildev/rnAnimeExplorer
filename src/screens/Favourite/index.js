@@ -50,8 +50,8 @@ const FavouriteScreen = () => {
       <FlatList
         data={favouriteAnimeList?.data}
         renderItem={_renderAnimeList}
+        style={{ flex: 1 }}
         contentContainerStyle={{
-          flex: 1,
           paddingBottom: 100,
         }}
         onEndReachedThreshold={0.2}
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 50,
+    marginTop: 100,
   },
 });
 
