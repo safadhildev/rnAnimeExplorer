@@ -73,3 +73,10 @@ export const getTagColors = tag => {
     accent: '#455A64',
   };
 };
+
+export const getFilteredObj = obj =>
+  Object.fromEntries(
+    Object.entries(obj).filter(
+      ([_, value]) => value !== '' && value !== null && value !== undefined,
+    ),
+  );

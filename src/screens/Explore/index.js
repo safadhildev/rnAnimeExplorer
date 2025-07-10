@@ -27,6 +27,7 @@ import {
 } from '../../components/constants';
 import tags from '../../components/constants/tags';
 import { AnimeContext } from '../../context/animeContext';
+import { getFilteredObj } from '../../utils';
 
 const FilterModal = ({ visible, onClose = () => {}, onSubmit = () => {} }) => {
   const theme = useTheme();
@@ -286,13 +287,15 @@ const ExploreScreen = () => {
   const _handleSearchAnime = async params => {
     try {
       setSearchLoading(true);
-      const response = await fetchAnimeList({
-        ...params,
+
+      const filteredQueries = getFilteredObj({
         ...filterQueries,
-        page: params?.page,
-        limit: params?.limit,
+        ...searchQueries,
+        ...params,
         q: params?.q || searchKeyword,
       });
+
+      const response = await fetchAnimeList(filteredQueries);
       if (response?.status === 200) {
         const results = await response.json();
         setSearchResults(results?.data);
@@ -309,14 +312,10 @@ const ExploreScreen = () => {
   const _handleSearchAnimeDebounce = debounce(_handleSearchAnime, 1000);
 
   const _handleLoadMore = async () => {
-    console.log('[DEBUG] >> _handleLoadMore >> ', {
-      searchQueries,
-    });
     try {
       setIsLoadMore(true);
 
       if (searchPagination?.has_next_page) {
-        console.log('[DEBUG] >> HAS NEXT');
         const updatedParams = {
           ...searchQueries,
           page: searchQueries?.page + 1,
@@ -325,7 +324,6 @@ const ExploreScreen = () => {
         };
 
         const response = await fetchAnimeList(updatedParams);
-        console.log('[DEBUG] >> _handleLoadMore >> ', { updatedParams });
         if (response?.status === 200) {
           const results = await response.json();
           setSearchResults([...searchResults, ...results?.data]);
@@ -355,6 +353,7 @@ const ExploreScreen = () => {
       ...params,
       page: 1,
       limit: 25,
+      q: searchKeyword,
     });
     flatlistRef?.current?.scrollToOffset({ offset: 0, animated: true });
   };

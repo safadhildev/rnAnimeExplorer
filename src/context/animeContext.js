@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { throttle } from 'lodash';
 import React, { createContext, useMemo, useState } from 'react';
-import { fetchAnimeById, fetchAnimeList } from '../api/apiAnime';
+import { fetchAnimeById, fetchAnimeList, fetchTopAnimeList } from '../api/apiAnime';
 import { STATE_UPDATER_TYPE } from '../components/constants/stateConstants';
 import { getStoreItem, onStoreItem, updateListStore } from '../utils';
 import { BUTTON_TYPE, STORE_KEY } from '../components/constants';
@@ -30,6 +30,7 @@ export const AnimeContext = createContext(null);
 
 const AnimeProvider = ({ children }) => {
   const [animeList, setAnimeList] = useState(DEFAULT_STATE.ANIME_LIST);
+  const [topAnimeList, setTopAnimeList] = useState(DEFAULT_STATE.ANIME_LIST);
   const [recommendations, setRecommendations] = useState(
     DEFAULT_STATE.RECOMMENDED_LIST,
   );
@@ -102,6 +103,25 @@ const AnimeProvider = ({ children }) => {
       _updateState(STATE_UPDATER_TYPE.ERROR, setRecommendations, error);
     } finally {
       _updateState(STATE_UPDATER_TYPE.END, setRecommendations);
+    }
+  };
+
+  const _getTopAnimeList = async (params) => {
+    try {
+      _updateState(STATE_UPDATER_TYPE.START, setTopAnimeList);
+      const response = await fetchTopAnimeList(params);
+      if (response?.status === 200) {
+        const results = await response.json();
+        _updateState(STATE_UPDATER_TYPE.UPDATE, setTopAnimeList, {
+          list: results?.data,
+          pagination: results?.pagination,
+        });
+      }
+    } catch (error) {
+      console.error('[DEBUG] >> _getTopAnimeList >> ', { error });
+      _updateState(STATE_UPDATER_TYPE.ERROR, setTopAnimeList, error);
+    } finally {
+      _updateState(STATE_UPDATER_TYPE.END, setTopAnimeList);
     }
   };
 
@@ -190,12 +210,14 @@ const AnimeProvider = ({ children }) => {
       value={{
         getAnimeList: _getAnimeList,
         getRecommendations: _getAnimeRecommendations,
+        getTopAnimeList: _getTopAnimeList,
         getStoredFavouriteAnimeList: _getStoredFavouriteAnimeList,
         getAnimeById: _getAnimeById,
         getIsAnimeFavourited: _getIsAnimeFavourited,
         onFavouriteAnime: _updateStoredFavouriteAnimeList,
         onInitApp: _initApp,
         animeList,
+        topAnimeList,
         recommendations,
         favouriteAnimeList,
         intialLoading,

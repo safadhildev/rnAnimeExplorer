@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { FlatList, ScrollView, useWindowDimensions, View } from 'react-native';
-import AnimeListItem from '../../components/AnimeListItem';
 import MyButton from '../../components/common/MyButton';
 import MyHeader, { HEADER_TYPE } from '../../components/common/MyHeader';
-
 import { useNavigation, useTheme } from '@react-navigation/native';
 import Carousel from 'react-native-reanimated-carousel';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,6 +11,7 @@ import Shimmer from '../../components/common/Shimmer';
 import RecommendationItem from '../../components/RecommendationItem';
 import { AnimeContext } from '../../context/animeContext';
 import styles from './styles';
+import AnimeListItem from '../../components/AnimeListItem';
 
 const HomeScreen = () => {
   const { width: fullWidth } = useWindowDimensions();
@@ -21,17 +20,17 @@ const HomeScreen = () => {
 
   const carouselRef = useRef(null);
   const {
-    getAnimeList,
+    getTopAnimeList,
     getRecommendations,
     recommendations,
-    animeList,
+    topAnimeList,
     favouriteAnimeList,
     getIsAnimeFavourited,
   } = useContext(AnimeContext);
 
   useEffect(() => {
     getRecommendations();
-    getAnimeList();
+    getTopAnimeList();
   }, []);
 
   const _handleAnimeOnPress = id => {
@@ -63,14 +62,14 @@ const HomeScreen = () => {
           data={item}
           isFavourited={isFavourited}
           index={index}
-          isLoading={animeList?.isLoading}
+          isLoading={topAnimeList?.isLoading}
           onPress={() => {
             _handleAnimeOnPress(item?.mal_id);
           }}
         />
       );
     },
-    [favouriteAnimeList, animeList],
+    [favouriteAnimeList, topAnimeList],
   );
 
   return (
@@ -92,8 +91,8 @@ const HomeScreen = () => {
             hideBackground
           />
         </View>
-        {(recommendations?.isLoading ||
-          recommendations?.data?.list?.length > 0) && (
+        {!recommendations?.isLoading &&
+        recommendations?.data?.list?.length === 0 ? null : (
           <MyHeader
             sticky
             text="Recommendations"
@@ -141,18 +140,21 @@ const HomeScreen = () => {
           )
         )}
 
-        <MyHeader
-          sticky
-          isLoading={animeList?.isLoading}
-          text="Anime List"
-          type={HEADER_TYPE.SECTION}
-          containerStyle={{
-            marginBottom: 10,
-            paddingHorizontal: 10,
-          }}
-        />
+        {!topAnimeList?.isLoading &&
+        topAnimeList?.data?.list?.length === 0 ? null : (
+          <MyHeader
+            sticky
+            isLoading={topAnimeList?.isLoading}
+            text="Top Anime"
+            type={HEADER_TYPE.SECTION}
+            containerStyle={{
+              marginBottom: 10,
+              paddingHorizontal: 10,
+            }}
+          />
+        )}
         <FlatList
-          data={animeList?.isLoading ? [1, 2, 3] : animeList?.data?.list}
+          data={topAnimeList?.isLoading ? [1, 2, 3] : topAnimeList?.data?.list}
           renderItem={_renderAnimeList}
           contentContainerStyle={{
             paddingBottom: 100,
