@@ -159,7 +159,7 @@ const AnimeProvider = ({ children }) => {
       ...theme,
       colors: {
         ...theme?.colors,
-        shadow: isDarkMode ? '#EEEEEE' : '#000000',
+        shadow: isDarkMode ? '#555555' : '#000000',
       },
       shimmerColors: isDarkMode
         ? ['#121212', '#272729', '#121212']
