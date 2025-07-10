@@ -288,17 +288,15 @@ const ExploreScreen = () => {
     try {
       const response = await fetchAnimeList({
         ...params,
-        page: params?.page + 1,
+        page: params?.page,
         limit: params?.limit,
-        q: searchKeyword,
+        q: params?.q || searchKeyword,
       });
       if (response?.status === 200) {
         const results = await response.json();
-        console.log('[DEBUG] >> _handleSearchAnime >> ', { results });
         setSearchResults(results?.data);
         setSearchPagination(searchPagination);
         setSearchQueries({ ...params });
-        console.log('[DEBUG] >> ', { cur: flatlistRef?.current });
       }
     } catch (error) {
       console.error('[DEBUG] >> _handleSearchAnime >> ', error);
@@ -309,41 +307,35 @@ const ExploreScreen = () => {
 
   const _handleSearchAnimeDebounce = debounce(_handleSearchAnime, 500);
 
-  const _handleLoadMore = async filterParams => {
+  const _handleLoadMore = async () => {
+    console.log('[DEBUG] >> _handleLoadMore >> ', {
+      searchQueries,
+    });
     try {
       setIsLoadMore(true);
 
       const updatedParams = {
         ...searchQueries,
-        ...filterParams,
         page: searchQueries?.page + 1,
         limit: searchQueries?.limit,
         q: searchKeyword,
       };
 
       const response = await fetchAnimeList(updatedParams);
+      console.log('[DEBUG] >> _handleLoadMore >> ', { updatedParams });
       if (response?.status === 200) {
         const results = await response.json();
-        setSearchResults(searchResults?.concat(results?.data));
-        setSearchPagination(searchPagination);
+        setSearchResults([...searchResults, ...results?.data]);
         setSearchQueries(updatedParams);
-        console.log('[DEBUG] >> ', { cur: flatlistRef?.current });
       }
     } catch (error) {
       console.error('[DEBUG] >> _handleSearchAnime >> ', error);
     } finally {
       setIsLoadMore(false);
     }
-
-    _handleSearchAnime({
-      ...searchQueries,
-      page: searchQueries?.page + 1,
-      limit: searchQueries?.limit,
-    });
   };
 
   const _handleTextChange = text => {
-    console.log('[DEBUG] >> ', { text });
     // setSearchQueries({ ...searchQueries, q: text });
     setSearchKeyword(text, searchQueries);
   };
@@ -363,8 +355,6 @@ const ExploreScreen = () => {
   };
 
   const _renderAnimeList = ({ item, index }) => {
-    console.log('[DEBUG] >> ', { item });
-
     if (index === 0) {
       return null;
     }
@@ -388,7 +378,12 @@ const ExploreScreen = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
         ref={flatlistRef}
+        alwaysBounceVertical={false}
         scrollEnabled={!searchLoading}
+        refreshing={searchLoading}
+        onRefresh={async () => {
+          await _handleSearchAnime({ q: '', page: 1, limit: 25 });
+        }}
         data={
           searchLoading ? [1, 2, 3, 4, 5, 6, 7] : [0]?.concat(searchResults)
         }
@@ -397,7 +392,7 @@ const ExploreScreen = () => {
           paddingBottom: 100,
         }}
         onEndReached={throttle(_handleLoadMore, 1000)}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.2}
         // stickyHeaderHiddenOnScroll
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[0]}
@@ -419,29 +414,15 @@ const ExploreScreen = () => {
                 padding: 5,
               }}
             >
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  backgroundColor: theme?.colors?.card,
-                  borderColor: theme?.colors?.primary,
-                  borderRadius: 10,
-                  borderWidth: 1,
-                }}
-              >
+              <View style={styles.searchInputWrapper(theme)}>
                 <TextInput
                   allowFontScaling={false}
                   multiline={false}
                   value={searchKeyword}
                   onChangeText={_handleTextChange}
                   onEndEditing={_handleSearchAnimeDebounce}
-                  style={{
-                    color: theme?.colors?.primary,
-                    flex: 1,
-                    paddingLeft: 10,
-                  }}
+                  style={styles.searchInput(theme)}
                   clearButtonMode="always"
-                  // placeholderTextColor={'#EEE'}
                   placeholder="Search"
                   placeholderTextColor={isDarkMode ? GREY_DARK : SILVER}
                 />
@@ -452,15 +433,7 @@ const ExploreScreen = () => {
                   iconColor={WHITE}
                   hideBorder
                   hideBackground
-                  containerStyle={{
-                    width: 50,
-                    backgroundColor: theme?.colors?.primary,
-                    margin: 2,
-                    borderTopLeftRadius: 0,
-                    borderBottomLeftRadius: 0,
-                    borderTopRightRadius: 8,
-                    borderBottomRightRadius: 8,
-                  }}
+                  containerStyle={styles.searchIconContainer(theme)}
                 />
               </View>
 
@@ -479,7 +452,14 @@ const ExploreScreen = () => {
         ListFooterComponent={
           isLoadMore ? (
             <ActivityIndicator size="small" style={{ marginVertical: 10 }} />
-          ) : null
+          ) : (
+            <MyButton
+              text="Load More"
+              containerStyle={styles.loadMoreButton(theme)}
+              textStyle={styles.loadMoreButtonText(theme)}
+              onPress={_handleLoadMore}
+            />
+          )
         }
         ListEmptyComponent={
           <View style={styles.emptyList}>
@@ -520,6 +500,37 @@ const styles = StyleSheet.create({
     right: 10,
     borderRadius: 20,
   }),
+  searchInputWrapper: theme => ({
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: theme?.colors?.card,
+    borderColor: theme?.colors?.primary,
+    borderRadius: 10,
+    borderWidth: 1,
+  }),
+  searchInput: theme => ({
+    color: theme?.colors?.primary,
+    flex: 1,
+    paddingLeft: 10,
+  }),
+  searchIconContainer: theme => ({
+    width: 50,
+    backgroundColor: theme?.colors?.primary,
+    margin: 2,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+  }),
+  loadMoreButton: theme => ({
+    marginTop: 10,
+    width: '30%',
+    alignSelf: 'center',
+    backgroundColor: theme.colors.card,
+    borderColor: theme?.colors?.border,
+    paddingVertical: 5,
+  }),
+  loadMoreButtonText: theme => ({ fontSize: 10, color: theme.colors.text }),
 });
 
 export default ExploreScreen;

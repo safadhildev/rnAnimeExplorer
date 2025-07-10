@@ -42,10 +42,8 @@ export const updateListStore = async (storeKey, data) => {
     }
 
     if (arr?.some(storedAnime => storedAnime?.mal_id === data?.mal_id)) {
-      console.log('[DEBUG] >> updateListStore >> REMOVE');
       arr = arr?.filter(storedAnime => storedAnime?.mal_id !== data?.mal_id);
     } else {
-      console.log('[DEBUG] >> updateListStore >> PUSH');
       arr.push(data);
     }
     await onStoreItem(storeKey, arr);

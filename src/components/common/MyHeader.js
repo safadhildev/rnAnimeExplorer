@@ -27,7 +27,6 @@ const MyHeader = ({
     );
   }
 
-  console.log('[DEBUG] >> theme?.colors?.text >> ', theme?.colors?.text);
   return (
     <View style={[styles.container(type, theme, sticky), containerStyle]}>
       <MyText style={[styles.text(type), style]}>{text}</MyText>

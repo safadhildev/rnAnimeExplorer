@@ -1,18 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { use, useContext, useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import React, { useContext, useEffect } from 'react';
+import { StatusBar, StyleSheet, View } from 'react-native';
+import { Fold } from 'react-native-animated-spinkit';
 import { AnimeContext } from '../../context/animeContext';
+import { BLACK, WHITE } from '../common/colors';
 
 const SplashOverlay = () => {
   const { onInitApp } = useContext(AnimeContext);
 
   useEffect(() => {
-    setTimeout(() => {
-      onInitApp();
-    }, 1000);
+    onInitApp();
+    StatusBar.setHidden(true);
   }, []);
 
-  return <ActivityIndicator size="large" />;
+  return (
+    <View style={styles.container}>
+      <Fold color={BLACK} />
+    </View>
+  );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: WHITE,
+  },
+});
 
 export default SplashOverlay;

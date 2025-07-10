@@ -25,7 +25,7 @@ const StickyHeader = ({ data }) => {
   const theme = useTheme();
 
   return (
-    <View style={styles.contenHeaderContainer(theme)}>
+    <View style={styles.contentHeaderContainer(theme)}>
       <View style={styles.contenHeaderRowWrapper}>
         <MyHeader
           text={data?.title}
@@ -99,7 +99,6 @@ const AnimeDetails = () => {
     });
 
   const _renderImage = () => {
-    console.log('[DEBUG] >> renderImage >> ', { data });
     return (
       <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
         <View style={{ height: fullHeight + 50, backgroundColor: BLACK }}>
@@ -256,7 +255,7 @@ const styles = StyleSheet.create({
   }),
   headerCtaWrapper: {
     position: 'absolute',
-    top: StatusBar.currentHeight + 20,
+    top: StatusBar.currentHeight + 15,
     left: 15,
     right: 15,
     zIndex: 1,
@@ -275,6 +274,7 @@ const styles = StyleSheet.create({
     paddingBottom: 150,
     flexGrow: 1,
     paddingHorizontal: 20,
+    paddingTop: 20,
     overflow: 'scroll',
   },
   line: theme => ({
@@ -292,9 +292,8 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   //   HEADER
-  contenHeaderContainer: theme => ({
+  contentHeaderContainer: theme => ({
     backgroundColor: theme?.colors?.card,
-    paddingTop: 5,
     paddingBottom: 10,
   }),
   contenHeaderRowWrapper: {

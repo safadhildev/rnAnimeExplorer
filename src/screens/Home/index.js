@@ -116,9 +116,6 @@ const HomeScreen = () => {
                   index === recommendations?.data?.list?.length - 1
                 ) {
                   // reached last item
-                  console.log('[DEBUG] >> ', {
-                    carouselRef: carouselRef?.current,
-                  });
                   carouselRef?.current?.scrollTo({
                     index: 0,
                     animated: true,
@@ -160,22 +157,6 @@ const HomeScreen = () => {
           contentContainerStyle={{
             paddingBottom: 100,
           }}
-          onEndReachedThreshold={0.2}
-          onEndReached={() => {
-            console.log('[DEBUG] >> onEndReached');
-          }}
-          // onEndReached={() =>
-          //   hasNextPage && !isFetchingNextPage && fetchNextPage()
-          // }
-          // ListFooterComponent={
-          //   isFetchingNextPage ? (
-          //     <ActivityIndicator
-          //       color="blue"
-          //       size="small"
-          //       style={{ marginBottom: 5 }}
-          //     />
-          //   ) : null
-          // }
         />
       </ScrollView>
     </SafeAreaView>
