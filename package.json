@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "android:release": "react-native run-android --variant=release",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
@@ -30,6 +29,7 @@
     "prop-types": "^15.8.1",
     "react": "19.1.0",
     "react-native": "^0.80.1",
+    "react-native-animated-spinkit": "^1.5.2",
     "react-native-gesture-handler": "^2.27.1",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-reanimated": "^3.18.0",
