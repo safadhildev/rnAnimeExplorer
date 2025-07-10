@@ -37,6 +37,15 @@ Make sure the following are installed before running the project:
      ```bash
      npm run ios
      ```
+---
+
+## Download App
+
+| Platform  | Download Link                                                       |
+|:---------:|:--------------------------------------------------------------------|
+| Android   | https://github.com/safadhildev/rnAnimeExplorer/releases/tag/v.1.0.0 | 
+
+(Or Visit Releases Page to see all files.)
 
 ---
 
