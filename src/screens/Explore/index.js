@@ -114,6 +114,7 @@ const FilterModal = ({ visible, onClose = () => {}, onSubmit = () => {} }) => {
             hideBorder
             hideBackground
             iconSize={30}
+            iconColor={theme?.colors?.text}
             onPress={onClose}
             containerStyle={{
               alignSelf: 'flex-start',
@@ -284,8 +285,10 @@ const ExploreScreen = () => {
 
   const _handleSearchAnime = async params => {
     try {
+      setSearchLoading(true);
       const response = await fetchAnimeList({
         ...params,
+        ...filterQueries,
         page: params?.page,
         limit: params?.limit,
         q: params?.q || searchKeyword,
@@ -293,7 +296,7 @@ const ExploreScreen = () => {
       if (response?.status === 200) {
         const results = await response.json();
         setSearchResults(results?.data);
-        setSearchPagination(searchPagination);
+        setSearchPagination(results.pagination);
         setSearchQueries({ ...params });
       }
     } catch (error) {
@@ -303,7 +306,7 @@ const ExploreScreen = () => {
     }
   };
 
-  const _handleSearchAnimeDebounce = debounce(_handleSearchAnime, 500);
+  const _handleSearchAnimeDebounce = debounce(_handleSearchAnime, 1000);
 
   const _handleLoadMore = async () => {
     console.log('[DEBUG] >> _handleLoadMore >> ', {
@@ -312,41 +315,48 @@ const ExploreScreen = () => {
     try {
       setIsLoadMore(true);
 
-      const updatedParams = {
-        ...searchQueries,
-        page: searchQueries?.page + 1,
-        limit: searchQueries?.limit,
-        q: searchKeyword,
-      };
+      if (searchPagination?.has_next_page) {
+        console.log('[DEBUG] >> HAS NEXT');
+        const updatedParams = {
+          ...searchQueries,
+          page: searchQueries?.page + 1,
+          limit: searchQueries?.limit,
+          q: searchKeyword,
+        };
 
-      const response = await fetchAnimeList(updatedParams);
-      console.log('[DEBUG] >> _handleLoadMore >> ', { updatedParams });
-      if (response?.status === 200) {
-        const results = await response.json();
-        setSearchResults([...searchResults, ...results?.data]);
-        setSearchQueries(updatedParams);
+        const response = await fetchAnimeList(updatedParams);
+        console.log('[DEBUG] >> _handleLoadMore >> ', { updatedParams });
+        if (response?.status === 200) {
+          const results = await response.json();
+          setSearchResults([...searchResults, ...results?.data]);
+          setSearchQueries(updatedParams);
+          setSearchPagination(results.pagination);
+        }
       }
     } catch (error) {
-      console.error('[DEBUG] >> _handleSearchAnime >> ', error);
+      console.error('[DEBUG] >> _handleLoadMore >> ', error);
     } finally {
       setIsLoadMore(false);
     }
   };
 
   const _handleTextChange = text => {
-    // setSearchQueries({ ...searchQueries, q: text });
     setSearchKeyword(text, searchQueries);
+    _handleSearchAnimeDebounce({
+      q: text,
+      page: 1,
+      limit: 25,
+    });
   };
 
-  const _handleSubmitFilter = params => {
-    setSearchLoading(true);
-    flatlistRef?.current?.scrollToOffset({ offset: 0, animated: true });
+  const _handleSubmitFilter = async params => {
     setFilterQueries(params);
-    _handleSearchAnime({
+    await _handleSearchAnime({
       ...params,
       page: 1,
       limit: 25,
     });
+    flatlistRef?.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
   const _handleAnimeOnPress = id => {
@@ -430,14 +440,26 @@ const ExploreScreen = () => {
                   multiline={false}
                   value={searchKeyword}
                   onChangeText={_handleTextChange}
-                  onEndEditing={_handleSearchAnimeDebounce}
                   style={styles.searchInput(theme)}
                   clearButtonMode="always"
                   placeholder="Search"
                   placeholderTextColor={isDarkMode ? GREY_DARK : SILVER}
+                  onSubmitEditing={event => {
+                    _handleSearchAnimeDebounce({
+                      q: event?.nativeEvent?.text,
+                      page: 1,
+                      limit: 25,
+                    });
+                  }}
                 />
                 <MyButton
-                  onPress={_handleSearchAnimeDebounce}
+                  onPress={() => {
+                    _handleSearchAnimeDebounce({
+                      q: searchKeyword,
+                      ...searchQueries,
+                    });
+                  }}
+                  disabled={searchKeyword?.length === 0}
                   icon="magnify"
                   iconSize={24}
                   iconColor={WHITE}
@@ -464,14 +486,14 @@ const ExploreScreen = () => {
         ListFooterComponent={
           isLoadMore ? (
             <ActivityIndicator size="small" style={{ marginVertical: 10 }} />
-          ) : (
+          ) : searchPagination?.has_next_page ? (
             <MyButton
               text="Load More"
               containerStyle={styles.loadMoreButton(theme)}
               textStyle={styles.loadMoreButtonText(theme)}
               onPress={_handleLoadMore}
             />
-          )
+          ) : null
         }
         ListEmptyComponent={
           <View style={styles.emptyList}>
