@@ -49,6 +49,19 @@ Make sure the following are installed before running the project:
 
 ---
 
+## Screenshots
+| Screen Name  | Screenshots                                                         | Extra Details |
+|:------------:|:-------------------------------------------------------------------:|:----------|
+| Home         |  <img alt="" src="https://github.com/user-attachments/assets/8e0f10e4-bb7d-4ddf-8be7-e4d181fd2add" width="130"/> | Recommendation section will auto scroll every 3s |
+| Details      |  <img alt="" src="https://github.com/user-attachments/assets/b737a07f-2897-4794-b20f-b056c993afc6" width="130"/> | Image section is embedded with sensor, user can rotate/tilt device too see the effect. User can share the anime link |
+| Explore      | <img alt="" src="https://github.com/user-attachments/assets/05e67db1-2076-4552-8db0-631de3c3c43c" width="130" />  <img alt="" src="https://github.com/user-attachments/assets/f4805647-3de6-4018-8215-9bbe6aeb8953" width="130"/> | User can search, and  filter by status/genres. infinite scroll list |
+| Favourites   | <img alt="" src="https://github.com/user-attachments/assets/c340c747-4aeb-405f-9eee-ca423e834ea8" width="130"/><img alt="" src="https://github.com/user-attachments/assets/da4a454d-9247-4b96-a2f2-91ae7f74fcc8" width="130"/> | Show list of favourited animes |
+
+
+
+// video src="https://github.maybank.com/MSS-DB/maya-mobile/assets/1707/18244a7a-ad03-4f1b-aa2d-96be56d00c87" alt=""/> 
+---
+
 ## Known Limitations / Trade-offs
 
 - Due to the lack of an Apple Developer Subscription, I’m currently unable to build a release version for iOS. Therefore, I’ve decided to focus on the Android platform for this assessment.
