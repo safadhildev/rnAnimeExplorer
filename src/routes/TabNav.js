@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   tabBarContainer: theme => ({
     backgroundColor: theme?.colors?.card,
     position: 'absolute',
-    bottom: 40,
+    bottom: 60,
     width: '50%',
     minHeight: 50,
     borderRadius: 30,

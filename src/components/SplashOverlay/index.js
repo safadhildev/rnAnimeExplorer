@@ -6,7 +6,7 @@ import { AnimeContext } from '../../context/animeContext';
 import { BLACK, WHITE } from '../common/colors';
 
 const SplashOverlay = () => {
-  const { onInitApp } = useContext(AnimeContext);
+  const { onInitApp, theme } = useContext(AnimeContext);
 
   useEffect(() => {
     onInitApp();
@@ -14,19 +14,19 @@ const SplashOverlay = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Fold color={BLACK} />
+    <View style={styles.container(theme)}>
+      <Fold color={theme?.colors?.text} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: theme => ({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: WHITE,
-  },
+    backgroundColor: theme?.colors?.background,
+  }),
 });
 
 export default SplashOverlay;
