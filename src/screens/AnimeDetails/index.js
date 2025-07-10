@@ -20,6 +20,7 @@ import { BUTTON_TYPE, UNKNOWN } from '../../components/constants';
 import { AnimeContext } from '../../context/animeContext';
 import tags from '../../components/constants/tags';
 import { getTagColors } from '../../utils';
+import SplashOverlay from '../../components/SplashOverlay';
 
 const StickyHeader = ({ data }) => {
   const theme = useTheme();
@@ -220,7 +221,7 @@ const AnimeDetails = () => {
   };
 
   if (isLoading) {
-    return <MyText>LOADING</MyText>;
+    return <SplashOverlay />;
   }
 
   const isFavourited = getIsAnimeFavourited(data?.mal_id);
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: (theme, fullHeight) => ({
     height: fullHeight - StatusBar.currentHeight,
-    paddingTop: StatusBar.currentHeight + 10,
+    paddingTop: StatusBar.currentHeight + 30,
     backgroundColor: theme?.colors?.card,
     marginTop: -50,
     borderTopLeftRadius: 20,
