@@ -1,6 +1,6 @@
 import { NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   ANIME_DETAILS_SCREEN,
@@ -11,11 +11,19 @@ import SplashOverlay from '../components/SplashOverlay';
 import { AnimeContext } from '../context/animeContext';
 import AnimeDetails from '../screens/AnimeDetails';
 import TabNavigator from './TabNav';
+import RNDeviceInfo from 'react-native-device-info';
+import { useWindowDimensions } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
 const RootStack = () => {
   const { intialLoading, theme } = useContext(AnimeContext);
+  const { width } = useWindowDimensions();
+  const [navigationBarHidden, setNavigationBarHidden] = useState(false);
+
+  useEffect(() => {
+    setNavigationBarHidden(RNDeviceInfo?.isLandscapeSync());
+  }, [width]);
 
   if (intialLoading) {
     return <SplashOverlay />;
@@ -29,8 +37,10 @@ const RootStack = () => {
             initialRouteName={TAB_NAVIGATOR}
             screenOptions={{
               headerShown: false,
-              // navigationBarHidden: true,
+              navigationBarHidden: navigationBarHidden,
+              navigationBarTranslucent: true,
               statusBarAnimation: 'none',
+              navigationBarColor: theme?.colors.background,
             }}
           >
             <Stack.Screen

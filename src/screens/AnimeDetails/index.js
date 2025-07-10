@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { BLACK, GREY_DARK, RED } from '../../components/common/colors';
+import { BLACK, GREY_DARK, RED, WHITE } from '../../components/common/colors';
 import MyButton from '../../components/common/MyButton';
 import MyChip from '../../components/common/MyChip';
 import MyHeader, { HEADER_TYPE } from '../../components/common/MyHeader';
@@ -21,6 +21,7 @@ import { AnimeContext } from '../../context/animeContext';
 import tags from '../../components/constants/tags';
 import { getTagColors } from '../../utils';
 import SplashOverlay from '../../components/SplashOverlay';
+import ParallaxImage from '../../components/ParallaxImage';
 
 const StickyHeader = ({ data }) => {
   const theme = useTheme();
@@ -48,7 +49,7 @@ const StickyHeader = ({ data }) => {
 const AnimeDetails = () => {
   const theme = useTheme();
 
-  const { height: fullHeight } = useWindowDimensions();
+  const { width: fullWidth, height: fullHeight } = useWindowDimensions();
 
   const navigation = useNavigation();
 
@@ -103,13 +104,71 @@ const AnimeDetails = () => {
     return (
       <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
         <View style={{ height: fullHeight + 50, backgroundColor: BLACK }}>
-          <Image
-            source={{ uri: data?.images?.webp?.large_image_url }}
-            style={styles.imageScreen}
+          <ParallaxImage
+            layers={[
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute',
+                  bottom: 300,
+                  left: 100,
+                  right: 100,
+                }}
+              >
+                <MyHeader
+                  text={data?.title}
+                  type={HEADER_TYPE.HEADING}
+                  style={{ color: WHITE }}
+                />
+                <MyText style={{ color: WHITE }}>{data?.title_japanese}</MyText>
+              </View>,
+              <View
+                style={{
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  position: 'absolute',
+                  top: -100,
+                  bottom: -100,
+                  left: -100,
+                  right: -100,
+                }}
+              />,
+              <Image
+                source={{ uri: data?.images?.webp?.large_image_url }}
+                style={styles.imageScreen}
+              />,
+            ]}
           />
+          <MyText
+            style={{
+              position: 'absolute',
+              bottom: 80,
+              left: 0,
+              right: 0,
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              textAlign: 'center',
+              opacity: 0.5,
+              color: WHITE,
+            }}
+          >
+            Scroll Down To View Details
+          </MyText>
         </View>
       </GestureDetector>
     );
+
+    // return (
+    //   <GestureDetector gesture={Gesture.Exclusive(doubleTap)}>
+    //     <View style={{ height: fullHeight + 50, backgroundColor: BLACK }}>
+    //       <Image
+    //         source={{ uri: data?.images?.webp?.large_image_url }}
+    //         style={styles.imageScreen}
+    //       />
+    //     </View>
+    //   </GestureDetector>
+    // );
   };
 
   const _renderShortInfo = (key, value) => {
