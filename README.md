@@ -43,7 +43,7 @@ Make sure the following are installed before running the project:
 
 | Platform  | Download Link                                                       |
 |:---------:|:--------------------------------------------------------------------|
-| Android   | https://github.com/safadhildev/rnAnimeExplorer/releases/tag/v.1.0.2 | 
+| Android   | https://github.com/safadhildev/rnAnimeExplorer/releases/tag/v.1.0.3 | 
 
 (Or Visit Releases Page to see all files.)
 
