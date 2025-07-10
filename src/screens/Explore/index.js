@@ -1,13 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigation, useTheme } from '@react-navigation/native';
-import { throttle, debounce } from 'lodash';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { debounce, throttle } from 'lodash';
+import React, { useContext, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -18,21 +12,21 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { fetchAnimeList } from '../../api/apiAnime';
 import AnimeListItem from '../../components/AnimeListItem';
 import MyButton from '../../components/common/MyButton';
+import MyChip from '../../components/common/MyChip';
 import MyHeader, { HEADER_TYPE } from '../../components/common/MyHeader';
 import MyText from '../../components/common/MyText';
 import { GREY_DARK, SILVER, WHITE } from '../../components/common/colors';
 import { ANIME_DETAILS_SCREEN } from '../../components/common/routeConstants';
-import { AnimeContext } from '../../context/animeContext';
-import { fetchAnimeList } from '../../api/apiAnime';
-import tags from '../../components/constants/tags';
-import MyChip from '../../components/common/MyChip';
 import {
   BUTTON_ICON_POSITION,
   BUTTON_TYPE,
   statusList,
 } from '../../components/constants';
+import tags from '../../components/constants/tags';
+import { AnimeContext } from '../../context/animeContext';
 
 const FilterModal = ({ visible, onClose = () => {}, onSubmit = () => {} }) => {
   const theme = useTheme();
@@ -54,8 +48,8 @@ const FilterModal = ({ visible, onClose = () => {}, onSubmit = () => {} }) => {
       ?.join(',');
 
     onSubmit({
-      status: selectedStatus?.name,
-      genres: selectedGenreOptionIdsMap,
+      status: selectedStatus?.name || '',
+      genres: selectedGenreOptionIdsMap || '',
     });
     onClose();
   };
@@ -277,6 +271,10 @@ const ExploreScreen = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
 
   const [showFilter, setShowFilter] = useState(false);
+  const [filterQueries, setFilterQueries] = useState({
+    status: '',
+    genres: '',
+  });
 
   const [isLoadMore, setIsLoadMore] = useState(false);
 
@@ -343,15 +341,27 @@ const ExploreScreen = () => {
   const _handleSubmitFilter = params => {
     setSearchLoading(true);
     flatlistRef?.current?.scrollToOffset({ offset: 0, animated: true });
+    setFilterQueries(params);
     _handleSearchAnime({
       ...params,
-      page: searchQueries?.page,
-      limit: searchQueries?.limit,
+      page: 1,
+      limit: 25,
     });
   };
 
   const _handleAnimeOnPress = id => {
     navigation.navigate(ANIME_DETAILS_SCREEN, { animeId: id });
+  };
+
+  const _getIsFilterQueriesExist = () => {
+    console.log('[DEBUG] >> getIsFilterQueriesExist >>', {
+      filterQueries,
+      e: filterQueries?.genres?.length > 0 || filterQueries?.status?.length > 0,
+    });
+
+    return (
+      filterQueries?.genres?.length > 0 || filterQueries?.status?.length > 0
+    );
   };
 
   const _renderAnimeList = ({ item, index }) => {
@@ -439,7 +449,9 @@ const ExploreScreen = () => {
 
               <MyButton
                 onPress={_toggleFilter}
-                icon={showFilter ? 'filter' : 'filter-outline'}
+                icon={
+                  _getIsFilterQueriesExist() ? 'filter-check' : 'filter-outline'
+                }
                 iconSize={28}
                 iconColor={theme?.colors?.text}
                 hideBorder
